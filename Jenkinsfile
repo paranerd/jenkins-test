@@ -14,6 +14,11 @@ pipeline {
         git 'https://github.com/paranerd/jenkins-test.git'
       }
     }
+    stage('Show tag') {
+      steps {
+        echo $tag
+      }
+    }
     stage('Build image') {
       steps {
         script {
