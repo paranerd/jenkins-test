@@ -1,16 +1,37 @@
 pipeline {
+  environment {
+    registry = "paranerd/jenkins-test"
+    registryCredential = 'dockerHub'
+    dockerImage = ''
+  }
 
   agent any
 
   stages {
-    stage('build') {
+    stage('Cloning git') {
       steps {
-        echo 'Building...'
+        git 'https://github.com/paranerd/jenkins-test.git'
       }
     }
-    stage('deploy') {
+    stage('Build image') {
       steps {
-        echo 'Deploying 3...'
+        script {
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        }
+      }
+    }
+    stage('Deploy Image') {
+      steps {
+        script {
+          docker.withRegistry('', registryCredential) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    stage('Clean up') {
+      steps {
+        sh 'docker rmi $registry:$BUILD_NUMBER'
       }
     }
   }
