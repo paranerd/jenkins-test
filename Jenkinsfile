@@ -3,6 +3,7 @@ pipeline {
     registry = "paranerd/jenkins-test"
     registryCredential = 'dockerHub'
     dockerImage = ''
+    tag = sh(returnStdout: true, script: 'git tag --contains').trim()
   }
 
   agent any
@@ -16,7 +17,7 @@ pipeline {
     stage('Build image') {
       steps {
         script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+          dockerImage = docker.build registry + ":$tag"
         }
       }
     }
