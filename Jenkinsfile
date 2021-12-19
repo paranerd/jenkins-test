@@ -17,7 +17,7 @@ pipeline {
     stage('Build image') {
       steps {
         script {
-          dockerImage = docker.build registry + ":$tag"
+          dockerImage = docker.build registry
         }
       }
     }
@@ -25,7 +25,8 @@ pipeline {
       steps {
         script {
           docker.withRegistry('', registryCredential) {
-            dockerImage.push()
+            dockerImage.push(":$tag")
+            dockerImage.push("latest")
           }
         }
       }
